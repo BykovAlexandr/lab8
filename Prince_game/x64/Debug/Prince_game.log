@@ -1,0 +1,17 @@
+﻿  Prince_game.cpp
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,42): warning C4244: аргумент: преобразование "float" в "T", возможна потеря данных
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,42): warning C4244:         with
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,42): warning C4244:         [
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,42): warning C4244:             T=int
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,42): warning C4244:         ]
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,39): warning C4244: аргумент: преобразование "float" в "T", возможна потеря данных
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,39): warning C4244:         with
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,39): warning C4244:         [
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,39): warning C4244:             T=int
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(114,39): warning C4244:         ]
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(150,14): warning C4244: инициализация: преобразование "sf::Int64" в "float", возможна потеря данных
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(165,31): warning C4305: =: усечение из "double" в "float"
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(166,26): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(176,31): warning C4305: =: усечение из "double" в "float"
+C:\Users\79065\source\repos\Prince_game\Prince_game\Prince_game.cpp(177,26): warning C4244: +=: преобразование "double" в "float", возможна потеря данных
+  Prince_game.vcxproj -> C:\Users\79065\source\repos\Prince_game\x64\Debug\Prince_game.exe
