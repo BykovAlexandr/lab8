@@ -1,94 +1,8 @@
-﻿#include <SFML/Graphics.hpp>
-#include <iostream> 
-
-using namespace sf;
-//int main()
-//{
-//	RenderWindow window(sf::VideoMode(640, 480), "Lesson 7. kychka-pc.ru");
-//
-//
-//
-//	Texture herotexture;
-//	herotexture.loadFromFile("images/hero.png");
-//
-//	Sprite herosprite;
-//	herosprite.setTexture(herotexture);
-//	herosprite.setTextureRect(IntRect(0, 192, 96, 96));
-//	herosprite.setPosition(250, 250);
-//
-//	float CurrentFrame = 0;//хранит текущий кадр
-//	Clock clock;
-//
-//	while (window.isOpen())
-//	{
-//
-//		float time = clock.getElapsedTime().asMicroseconds();
-//		clock.restart();
-//		time = time / 800;
-//
-//
-//		sf::Event event;
-//		while (window.pollEvent(event))
-//		{
-//			if (event.type == sf::Event::Closed)
-//				window.close();
-//		}
-//
-//
-//		///////////////////////////////////////////Управление персонажем с анимацией////////////////////////////////////////////////////////////////////////
-//		if ((Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A)))) { //если нажата клавиша стрелка влево или англ буква А
-//			CurrentFrame += 0.005 * time; //служит для прохождения по "кадрам". переменная доходит до трех суммируя произведение времени и скорости. изменив 0.005 можно изменить скорость анимации
-//			if (CurrentFrame > 4) CurrentFrame -= 4; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
-//			if (CurrentFrame <2)
-//			herosprite.setTextureRect(IntRect(1092-( 32* int(CurrentFrame)), 102, 30, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			if (int(CurrentFrame) == 2 )
-//				herosprite.setTextureRect(IntRect(1036, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			if (int(CurrentFrame) == 3)
-//				herosprite.setTextureRect(IntRect(1012, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			herosprite.move(-0.1 * time, 0);//происходит само движение персонажа влево
-//		}
-//
-//		if ((Keyboard::isKeyPressed(Keyboard::Right) || (Keyboard::isKeyPressed(Keyboard::D)))) {
-//			CurrentFrame += 0.005 * time; //служит для прохождения по "кадрам". переменная доходит до трех суммируя произведение времени и скорости. изменив 0.005 можно изменить скорость анимации
-			//if (CurrentFrame > 4) CurrentFrame -= 4; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
-			//if (int(CurrentFrame) == 0)
-			//	herosprite.setTextureRect(IntRect(318, 102, 30, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-			//if (int(CurrentFrame) == 1)
-			//	herosprite.setTextureRect(IntRect(348, 102, 34, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-			//if (int(CurrentFrame) == 2)
-			//	herosprite.setTextureRect(IntRect(380, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-			//if (int(CurrentFrame) == 3)
-//				herosprite.setTextureRect(IntRect(404, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			herosprite.move(0.1 * time, 0);//происходит само движение персонажа вправо
-//
-//		}
-//
-//
-//		if ((Keyboard::isKeyPressed(Keyboard::Up) || (Keyboard::isKeyPressed(Keyboard::W)))) {
-//			CurrentFrame += 0.005 * time; //служит для прохождения по "кадрам". переменная доходит до трех суммируя произведение времени и скорости. изменив 0.005 можно изменить скорость анимации
-//			if (CurrentFrame > 3) CurrentFrame -= 3; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
-//			herosprite.setTextureRect(IntRect(96 * int(CurrentFrame), 288, 96, 96)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			herosprite.move(0, -0.1 * time);//происходит само движение персонажа вверх
-//		}
-//
-//		if ((Keyboard::isKeyPressed(Keyboard::Down) || (Keyboard::isKeyPressed(Keyboard::S)))) {
-//			CurrentFrame += 0.005 * time; //служит для прохождения по "кадрам". переменная доходит до трех суммируя произведение времени и скорости. изменив 0.005 можно изменить скорость анимации
-//			if (CurrentFrame > 3) CurrentFrame -= 3; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
-//			herosprite.setTextureRect(IntRect(96 * int(CurrentFrame), 0, 96, 96)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
-//			herosprite.move(0, 0.1 * time);//происходит само движение персонажа вниз
-//		}
-//
-//		window.clear();
-//		window.draw(herosprite);
-//		window.display();
-//	}
-//
-//	return 0;
-//}
-
+﻿
 
 #include <iostream> 
 #include <SFML/Graphics.hpp>
+#include "map.h" 
 
 
 using namespace sf;
@@ -111,7 +25,7 @@ public:
 		texture.loadFromImage(image);//закидываем наше изображение в текстуру
 		sprite.setTexture(texture);//заливаем спрайт текстурой
 		x = X; y = Y;//координата появления спрайта
-		sprite.setTextureRect(IntRect(0, 0, w, h));  //Задаем спрайту один прямоугольник для вывода одного льва, а не кучи львов сразу. IntRect - приведение типов
+		sprite.setTextureRect(IntRect(0, 0, 11, 40));  //Задаем спрайту один прямоугольник для вывода одного льва, а не кучи львов сразу. IntRect - приведение типов
 	}
 
 
@@ -137,7 +51,14 @@ public:
 
 int main()
 {
-	RenderWindow window(sf::VideoMode(640, 480), "Lesson 8. kychka-pc.ru");
+	RenderWindow window(sf::VideoMode(640, 480), "Lesson 9. kychka-pc.ru");
+
+	Image map_image;//объект изображения для карты
+	map_image.loadFromFile("images/mapforprince.png");//загружаем файл для карты
+	Texture map;//текстура карты
+	map.loadFromImage(map_image);//заряжаем текстуру картинкой
+	Sprite s_map;//создаём спрайт для карты
+	s_map.setTexture(map);//заливаем текстуру спрайтом
 
 	float CurrentFrame = 0;//хранит текущий кадр
 	Clock clock;
@@ -193,6 +114,20 @@ int main()
 
 
 		window.clear();
+
+
+		for (int i = 0; i < HEIGHT_MAP; i++)
+			for (int j = 0; j < WIDTH_MAP; j++)
+			{
+				if (TileMap[i][j] == ' ')  s_map.setTextureRect(IntRect(55, 60, 32, 32)); //если встретили символ пробел, то рисуем 1й квадратик
+				if (TileMap[i][j] == 's')  s_map.setTextureRect(IntRect(0, 569, 32, 32));//если встретили символ s, то рисуем 2й квадратик
+				if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(190, 130, 32, 32));//если встретили символ 0, то рисуем 3й квадратик
+
+
+				s_map.setPosition(j * 32, i * 32);//по сути раскидывает квадратики, превращая в карту. то есть задает каждому из них позицию. если убрать, то вся карта нарисуется в одном квадрате 32*32 и мы увидим один квадрат
+
+				window.draw(s_map);//рисуем квадратики на экран
+			}
 		window.draw(hero.sprite);//рисуем спрайт объекта p класса player
 		window.display();
 	}
