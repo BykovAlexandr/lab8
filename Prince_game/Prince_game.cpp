@@ -33,7 +33,7 @@ public:
 		sprite.setTexture(texture);
 
 		x = X; y = Y;
-		sprite.setTextureRect(IntRect(0, 0, 11, 40));
+		sprite.setTextureRect(IntRect(1430, 0, 11, 40));
 		sprite.setOrigin(w / 2, h / 2);
 	}
 	void control() {

@@ -26,7 +26,7 @@ sf::String TileMap[HEIGHT_MAP] = {
 	"0       h       00             m00  0  0",
 	"0   s       00        0  0  0 0000l    0",
 	"0 h    0           0  0       00000   00",
-	"0        0            0lllllll0h      h0",
+	"0        0           h0lllllll0h      h0",
 	"0    0     0000       000000000h    0  0",
 	"0       m   s    0        s        0   0",
 	"0 m l 0 0          00                 h0",
