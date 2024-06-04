@@ -1,6 +1,7 @@
 ﻿
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "map.h"
 #include "view.h"
 #include <iostream>
@@ -36,14 +37,14 @@ public:
 		sprite.setOrigin(w / 2, h / 2);
 	}
 	void control() {
-		if (Keyboard::isKeyPressed(Keyboard::Left)) {
+		if (Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A))) {
 			state = left;
 			speed = 0.1;
 			//currentFrame += 0.005*time;
 			//if (currentFrame > 3) currentFrame -= 3;
 			//p.sprite.setTextureRect(IntRect(96 * int(currentFrame), 135, 96, 54));
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Right)) {
+		if ((Keyboard::isKeyPressed(Keyboard::Right ) || (Keyboard::isKeyPressed(Keyboard::D)))) {
 			state = right;
 			speed = 0.1;
 			//	currentFrame += 0.005*time;
@@ -51,7 +52,7 @@ public:
 			//	p.sprite.setTextureRect(IntRect(96 * int(currentFrame), 232, 96, 54));
 		}
 
-		if ((Keyboard::isKeyPressed(Keyboard::Up)) && (onGround)) {
+		if ((Keyboard::isKeyPressed(Keyboard::Up) || (Keyboard::isKeyPressed(Keyboard::W))) && (onGround)) {
 			state = jump; dy = -0.5; onGround = false;//то состояние равно прыжок,прыгнули и сообщили, что мы не на земле
 			//currentFrame += 0.005*time;
 			//if (currentFrame > 3) currentFrame -= 3;
@@ -114,10 +115,9 @@ public:
 	}
 };
 
-
-int main()
+bool startGame()
 {
-	RenderWindow window(VideoMode(1280,896), "Prince_of_Persia(ZBT)");
+	RenderWindow window(VideoMode(1280, 896), "Prince_of_Persia(ZBT)");
 	/*RenderWindow(sf::VideoMode(), "app.exe", sf::Style::Fullscreen);*/
 
 	Font font;//шрифт 
@@ -147,7 +147,11 @@ int main()
 	Sprite gamew;//создаём спрайт для конца
 
 	float CurrentFrame = 0;//хранит текущий кадр
+
+
 	Clock clock;
+	Clock gameTimeClock;//переменная игрового времени, будем здесь хранить время игры 
+	int gameTime = 0;//объявили игровое время, инициализировали.
 
 	Player hero("hero.png", 1056, 96, 32, 42);//создаем объект p класса player,задаем "hero.png" как имя файла+расширение, далее координата Х,У, ширина, высота.
 
@@ -156,7 +160,8 @@ int main()
 
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
-		time = time / 400;
+		if (hero.life) gameTime = gameTimeClock.getElapsedTime().asSeconds();//игровое время в секундах идёт вперед, пока жив игрок, перезагружать как time его не надо. оно не обновляет логику игры
+		time = time / 600;
 
 
 		Event event;
@@ -183,13 +188,15 @@ int main()
 			window.clear();
 			window.draw(gamew);
 			window.display();
-			window.hasFocus();
+			sleep(Time(seconds(3)));
+			exit(0);
 		}
+
 
 		if (hero.life == true)
 		{
 			///////////////////////////////////////////Управление персонажем с анимацией////////////////////////////////////////////////////////////////////////
-			if ((Keyboard::isKeyPressed(Keyboard::Left))) {
+			if (Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A))) {
 				hero.isMove = 1;
 				hero.dir = 1; hero.speed = 0.1;//dir =1 - направление вверх, speed =0.1 - скорость движения. Заметьте - время мы уже здесь ни на что не умножаем и нигде не используем каждый раз
 				CurrentFrame += 0.005 * time;
@@ -202,8 +209,8 @@ int main()
 					hero.sprite.setTextureRect(IntRect(1012, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
 				hero.isMove = 0;
 			}
-			if (Keyboard::isKeyPressed(Keyboard::Right))
-			{	
+			if ((Keyboard::isKeyPressed(Keyboard::Right) || (Keyboard::isKeyPressed(Keyboard::D))))
+			{
 				hero.isMove = 1;
 				hero.dir = 0; hero.speed = 0.1;//направление вправо, см выше
 				CurrentFrame += 0.005 * time;
@@ -233,10 +240,10 @@ int main()
 
 		window.clear();
 		if (hero.life == true)
-		{
+		{	
 			for (int i = 0; i < HEIGHT_MAP; i++)
 				for (int j = 0; j < WIDTH_MAP; j++)
-				{	
+				{
 					if (TileMap[i][j] == 'd')  s_map.setTextureRect(IntRect(2690, 240, 32, 32));//д
 					if (TileMap[i][j] == 'e')  s_map.setTextureRect(IntRect(2690, 268, 32, 32));//в
 					if (TileMap[i][j] == 'v')  s_map.setTextureRect(IntRect(2713, 240, 32, 32));//е
@@ -254,16 +261,39 @@ int main()
 
 					window.draw(s_map);//рисуем квадратики на экран
 				}
+			std::ostringstream gameTimeString;    // объявили переменную здоровья и времени
+			gameTimeString << gameTime;		//формируем строку
+			text.setString("\nВремя игры: " + gameTimeString.str());//задаем строку тексту и вызываем сформированную выше строку методом .str()
+
+			text.setPosition(view.getCenter().x+240, view.getCenter().y-120);//задаем позицию текста, отступая от центра камеры
+			window.draw(text);//рисую этот текст
+
 			std::ostringstream playerScoreString;    // объявили переменную
 			playerScoreString << hero.playerScore;		//занесли в нее число очков, то есть формируем строку
-			text.setString("Собрано монет:" + playerScoreString.str()+ "/9");//задаем строку тексту и вызываем сформированную выше строку методом .str() 
-			text.setPosition(view.getCenter().x+360, view.getCenter().y - 320);//задаем позицию текста, отступая от центра камеры
+			text.setString("Собрано монет:" + playerScoreString.str() + "/9");//задаем строку тексту и вызываем сформированную выше строку методом .str() 
+			text.setPosition(view.getCenter().x + 360, view.getCenter().y - 320);//задаем позицию текста, отступая от центра камеры
 			window.draw(text);//рисую этот текст
 			window.draw(hero.sprite);//рисуем спрайт объекта p класса player
 			window.display();
 		}
-		
+		if (Keyboard::isKeyPressed(Keyboard::Enter))
+		{ 
+			return true; 
+		}//если таб, то перезагружаем игру
+		if (Keyboard::isKeyPressed(Keyboard::Escape)) { return false; }//если эскейп, то выходим из игры
 
 	}
+	return 0;
+}
+
+
+
+void gameRunning() {//ф-ция перезагружает игру , если это необходимо
+	if (startGame()) { gameRunning(); }////если startGame() == true, то вызываем занова ф-цию isGameRunning, которая в свою очередь опять вызывает startGame() 
+}
+
+int main()
+{
+	gameRunning();//запускаем процесс игры
 	return 0;
 }
