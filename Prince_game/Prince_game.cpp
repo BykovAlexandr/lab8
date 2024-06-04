@@ -1,57 +1,112 @@
 ﻿
 
-#include <iostream> 
 #include <SFML/Graphics.hpp>
-#include "map.h" 
-
+#include "map.h"
+#include <iostream>
+#include <sstream>
 
 using namespace sf;
 
 ////////////////////////////////////////////////////КЛАСС ИГРОКА////////////////////////
-class Player { // класс Игрока
+class Player {
+
 public:
-	float x, y, w, h, dx, dy, speed = 0; //координаты игрока х и у, высота ширина, ускорение (по х и по у), сама скорость
-	int dir = 0; //направление (direction) движения игрока
-	String File; //файл с расширением
-	Image image;//сфмл изображение
-	Texture texture;//сфмл текстура
-	Sprite sprite;//сфмл спрайт
+	float w, h, dx, dy, x, y, speed;
+	int dir, playerScore, health;
+	bool life, isMove, isSelect, onGround;//добавили переменные состояния нахождения на земле
+	enum { left, right, up, down, jump, stay } state;//добавляем тип перечисления - состояние объекта
+	String File;
+	Image image;
+	Texture texture;
+	Sprite sprite;
+	Player(String F, float X, float Y, float W, float H) {
 
-	Player(String F, float X, float Y, float W, float H) {  //Конструктор с параметрами(формальными) для класса Player. При создании объекта класса мы будем задавать имя файла, координату Х и У, ширину и высоту
-		File = F;//имя файла+расширение
-		w = W; h = H;//высота и ширина
-		image.loadFromFile("images/" + File);//запихиваем в image наше изображение вместо File мы передадим то, что пропишем при создании объекта. В нашем случае "hero.png" и получится запись идентичная 	image.loadFromFile("images/hero/png");
-		image.createMaskFromColor(Color(41, 33, 59));//убираем ненужный темно-синий цвет, эта тень мне показалась не красивой.
-		texture.loadFromImage(image);//закидываем наше изображение в текстуру
-		sprite.setTexture(texture);//заливаем спрайт текстурой
-		x = X; y = Y;//координата появления спрайта
-		sprite.setTextureRect(IntRect(0, 0, 11, 40));  //Задаем спрайту один прямоугольник для вывода одного льва, а не кучи львов сразу. IntRect - приведение типов
+		dir = 0; speed = 0; playerScore = 0; health = 100; dx = 0; dy = 0;
+		life = true; isMove = false; isSelect = false; onGround = false;
+		File = F;
+		w = W; h = H;
+		image.loadFromFile("images/" + File);
+		image.createMaskFromColor(Color(41, 33, 59));
+		texture.loadFromImage(image);
+		sprite.setTexture(texture);
+
+		x = X; y = Y;
+		sprite.setTextureRect(IntRect(0, 0, 11, 40));
+		sprite.setOrigin(w / 2, h / 2);
 	}
-
-
-
-	void update(float time) //функция "оживления" объекта класса. update - обновление. принимает в себя время SFML , вследствие чего работает бесконечно, давая персонажу движение.
-	{
-		switch (dir)//реализуем поведение в зависимости от направления. (каждая цифра соответствует направлению)
-		{
-		case 0: dx = speed; dy = 0;   break;//по иксу задаем положительную скорость, по игреку зануляем. получаем, что персонаж идет только вправо
-		case 1: dx = -speed; dy = 0;   break;//по иксу задаем отрицательную скорость, по игреку зануляем. получается, что персонаж идет только влево
-		case 2: dx = 0; dy = speed;   break;//по иксу задаем нулевое значение, по игреку положительное. получается, что персонаж идет только вниз
-		case 3: dx = 0; dy = -speed;   break;//по иксу задаем нулевое значение, по игреку отрицательное. получается, что персонаж идет только вверх
+	void control() {
+		if (Keyboard::isKeyPressed(Keyboard::Left)) {
+			state = left;
+			speed = 0.1;
+			//currentFrame += 0.005*time;
+			//if (currentFrame > 3) currentFrame -= 3;
+			//p.sprite.setTextureRect(IntRect(96 * int(currentFrame), 135, 96, 54));
+		}
+		if (Keyboard::isKeyPressed(Keyboard::Right)) {
+			state = right;
+			speed = 0.1;
+			//	currentFrame += 0.005*time;
+			//	if (currentFrame > 3) currentFrame -= 3;
+			//	p.sprite.setTextureRect(IntRect(96 * int(currentFrame), 232, 96, 54));
 		}
 
-		x += dx * time;//то движение из прошлого урока. наше ускорение на время получаем смещение координат и как следствие движение
-		y += dy * time;//аналогично по игреку
+		if ((Keyboard::isKeyPressed(Keyboard::Up)) && (onGround)) {
+			state = jump; dy = -0.5; onGround = false;//то состояние равно прыжок,прыгнули и сообщили, что мы не на земле
+			//currentFrame += 0.005*time;
+			//if (currentFrame > 3) currentFrame -= 3;
+			//p.sprite.setTextureRect(IntRect(96 * int(currentFrame), 307, 96, 96));
+		}
 
-		speed = 0;//зануляем скорость, чтобы персонаж остановился.
-		sprite.setPosition(x, y); //выводим спрайт в позицию x y , посередине. бесконечно выводим в этой функции, иначе бы наш спрайт стоял на месте.
+	}
+	void update(float time)
+	{
+		control();//функция управления персонажем
+		switch (state)//тут делаются различные действия в зависимости от состояния
+		{
+		case right: dx = speed; break;//состояние идти вправо
+		case left: dx = -speed; break;//состояние идти влево
+		case up: break;//будет состояние поднятия наверх (например по лестнице)
+		case down: break;//будет состояние во время спуска персонажа (например по лестнице)
+		case jump: break;//здесь может быть вызов анимации
+		case stay: break;//и здесь тоже		
+		}
+		x += dx * time;
+		checkCollisionWithMap(dx, 0);//обрабатываем столкновение по Х
+		y += dy * time;
+		checkCollisionWithMap(0, dy);//обрабатываем столкновение по Y
+		if (!isMove) speed = 0;
+		sprite.setPosition(x + w / 2, y + h / 2); //задаем позицию спрайта в место его центра
+		if (health <= 0) { life = false; }
+		dy = dy + 0.0015 * time;//делаем притяжение к земле
+	}
+
+	float getplayercoordinateX() {
+		return x;
+	}
+	float getplayercoordinateY() {
+		return y;
+	}
+
+	void checkCollisionWithMap(float Dx, float Dy)//ф ция проверки столкновений с картой
+	{
+		for (int i = y / 32; i < (y + h) / 32; i++)//проходимся по элементам карты
+			for (int j = x / 32; j < (x + w) / 32; j++)
+			{
+				if (TileMap[i][j] == '0')//если элемент наш тайлик земли? то
+				{
+					if (Dy > 0) { y = i * 32 - h;  dy = 0; onGround = true; }//по Y вниз=>идем в пол(стоим на месте) или падаем. В этот момент надо вытолкнуть персонажа и поставить его на землю, при этом говорим что мы на земле тем самым снова можем прыгать
+					if (Dy < 0) { y = i * 32 + 32;  dy = 0; }//столкновение с верхними краями карты(может и не пригодиться)
+					if (Dx > 0) { x = j * 32 - w; }//с правым краем карты
+					if (Dx < 0) { x = j * 32 + 32; }// с левым краем карты
+				}
+			}
 	}
 };
 
 
 int main()
 {
-	RenderWindow window(sf::VideoMode(640, 480), "Lesson 9. kychka-pc.ru");
+	RenderWindow window(sf::VideoMode(1920, 1080), "Lesson 9. kychka-pc.ru");
 
 	Image map_image;//объект изображения для карты
 	map_image.loadFromFile("images/mapforprince.png");//загружаем файл для карты
@@ -63,14 +118,14 @@ int main()
 	float CurrentFrame = 0;//хранит текущий кадр
 	Clock clock;
 
-	Player hero("hero.png", 250, 250, 96.0, 96.0);//создаем объект p класса player,задаем "hero.png" как имя файла+расширение, далее координата Х,У, ширина, высота.
+	Player hero("hero.png", 64, 32, 32, 42);//создаем объект p класса player,задаем "hero.png" как имя файла+расширение, далее координата Х,У, ширина, высота.
 
 	while (window.isOpen())
 	{
 
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
-		time = time / 800;
+		time = time / 600;
 
 
 		sf::Event event;
@@ -82,7 +137,7 @@ int main()
 
 
 		///////////////////////////////////////////Управление персонажем с анимацией////////////////////////////////////////////////////////////////////////
-		if ((Keyboard::isKeyPressed(Keyboard::Left) || (Keyboard::isKeyPressed(Keyboard::A)))) {
+		if ((Keyboard::isKeyPressed(Keyboard::Left))) {
 			hero.dir = 1; hero.speed = 0.1;//dir =1 - направление вверх, speed =0.1 - скорость движения. Заметьте - время мы уже здесь ни на что не умножаем и нигде не используем каждый раз
 			CurrentFrame += 0.005 * time;
 			if (CurrentFrame > 4) CurrentFrame -= 4; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
@@ -93,7 +148,8 @@ int main()
 			if (int(CurrentFrame) == 3)
 				hero.sprite.setTextureRect(IntRect(1012, 102, 24, 42)); //проходимся по координатам Х. получается 96,96*2,96*3 и опять 96
 		}
-		if ((Keyboard::isKeyPressed(Keyboard::Right) || (Keyboard::isKeyPressed(Keyboard::D)))) {
+		if (Keyboard::isKeyPressed(Keyboard::Right))
+		{
 			hero.dir = 0; hero.speed = 0.1;//направление вправо, см выше
 			CurrentFrame += 0.005 * time;
 			if (CurrentFrame > 4) CurrentFrame -= 4; //проходимся по кадрам с первого по третий включительно. если пришли к третьему кадру - откидываемся назад.
@@ -118,10 +174,11 @@ int main()
 
 		for (int i = 0; i < HEIGHT_MAP; i++)
 			for (int j = 0; j < WIDTH_MAP; j++)
-			{
+			{	
+				if (TileMap[i][j] == 'h')  s_map.setTextureRect(IntRect(700,265, 32, 32)); //если встретили символ h, то рисуем гнилой квадратик
 				if (TileMap[i][j] == ' ')  s_map.setTextureRect(IntRect(55, 60, 32, 32)); //если встретили символ пробел, то рисуем 1й квадратик
-				if (TileMap[i][j] == 's')  s_map.setTextureRect(IntRect(0, 569, 32, 32));//если встретили символ s, то рисуем 2й квадратик
-				if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(190, 130, 32, 32));//если встретили символ 0, то рисуем 3й квадратик
+				if (TileMap[i][j] == 's')  s_map.setTextureRect(IntRect(0, 569, 32, 32));//если встретили символ s, то рисуем факел
+				if ((TileMap[i][j] == '0')) s_map.setTextureRect(IntRect(190, 130, 32, 32));//если встретили символ 0, то рисуем 2й квадратик
 
 
 				s_map.setPosition(j * 32, i * 32);//по сути раскидывает квадратики, превращая в карту. то есть задает каждому из них позицию. если убрать, то вся карта нарисуется в одном квадрате 32*32 и мы увидим один квадрат
